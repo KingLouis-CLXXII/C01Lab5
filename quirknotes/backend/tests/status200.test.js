@@ -111,7 +111,7 @@ test("/patchNote - Patch with just title", async () => {
 });
 
 test("/patchNote - Patch with just content", async () => {
-  const noteId = createTestNote();
+  const noteId = await createTestNote();
   const newContent = "Updated Content";
 
   const response = await fetch(`${SERVER_URL}/patchNote/${noteId}`, {
@@ -147,7 +147,7 @@ test("/deleteAllNotes - Delete three notes", async () => {
 });
 
 test("/updateNoteColor - Update color of a note to red (#FF0000)", async () => {
-  const noteId = createTestNote();
+  const noteId = await createTestNote();
   const color = "#FFFFFF";
 
   const response = await fetch(`${SERVER_URL}/updateNoteColor/${noteId}`, {
