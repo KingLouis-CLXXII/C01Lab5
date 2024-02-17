@@ -60,7 +60,7 @@ test("/getAllNotes - Return list of two notes for getAllNotes", async () => {
   const body = await response.json();
 
   expect(response.status).toBe(200);
-  expect(body.response.length).toBe(2);
+  expect(body.response).toBe(2);
 });
 
 test("/deleteNote - Delete a note", async () => {
