@@ -17,7 +17,7 @@ async function createTestNote() {
     }),
   });
   const body = await response.json();
-  return body.insertedId;
+  return body;
 }
 
 beforeEach(async () => {
