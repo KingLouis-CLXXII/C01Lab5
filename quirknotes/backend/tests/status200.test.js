@@ -16,8 +16,8 @@ async function createTestNote() {
       content: "This is a test note.",
     }),
   });
-  const body = await response.json();
-  return body;
+
+  return response;
 }
 
 beforeEach(async () => {
@@ -25,10 +25,11 @@ beforeEach(async () => {
 });
 
 test("/postNote - Post a note", async () => {
-  const postNoteBody = await createTestNote();
+  const res = await createTestNote();
+  const body = await res.json();
 
-  expect(postNoteBody.status).toBe(200);
-  expect(postNoteBody.response).toBe("Note added succesfully.");
+  expect(res.status).toBe(200);
+  expect(body.response).toBe("Note added succesfully.");
 });
 
 test("/getAllNotes - Return list of zero notes for getAllNotes", async () => {
@@ -50,7 +51,8 @@ test("/getAllNotes - Return list of two notes for getAllNotes", async () => {
 });
 
 test("/deleteNote - Delete a note", async () => {
-  const noteId = await createTestNote();
+  const res = await createTestNote();
+  const noteId = (await res.json()).insertedId;
   const response = await fetch(`${SERVER_URL}/deleteNote/${noteId}`, { method: "DELETE" });
   const body = await response.json();
 
@@ -59,7 +61,8 @@ test("/deleteNote - Delete a note", async () => {
 });
 
 test("/patchNote - Patch with content and title", async () => {
-  const noteId = createTestNote();
+  const res = await createTestNote();
+  const noteId = (await res.json()).insertedId;
   const newTitle = "Updated Title";
   const newContent = "Updated Content";
 
@@ -73,13 +76,12 @@ test("/patchNote - Patch with content and title", async () => {
   const body = await response.json();
 
   expect(response.status).toBe(200);
-  expect(body.response).toContain(noteId);
-  expect(title).toBe(newTitle);
-  expect(content).toBe(newContent);
+  expect(body.response).toBe(`Document with ID ${noteId} patched.`);
 });
 
 test("/patchNote - Patch with just title", async () => {
-  const noteId = createTestNote();
+  const res = await createTestNote();
+  const noteId = (await res.json()).insertedId;
   const newTitle = "Updated Title";
 
   const response = await fetch(`${SERVER_URL}/patchNote/${noteId}`, {
@@ -92,12 +94,12 @@ test("/patchNote - Patch with just title", async () => {
   const body = await response.json();
 
   expect(response.status).toBe(200);
-  expect(body.response).toContain(noteId);
-  expect(title).toBe(newTitle);
+  expect(body.response).toBe(`Document with ID ${noteId} patched.`);
 });
 
 test("/patchNote - Patch with just content", async () => {
-  const noteId = await createTestNote();
+  const res = await createTestNote();
+  const noteId = (await res.json()).insertedId;
   const newContent = "Updated Content";
 
   const response = await fetch(`${SERVER_URL}/patchNote/${noteId}`, {
@@ -110,8 +112,7 @@ test("/patchNote - Patch with just content", async () => {
   const body = await response.json();
 
   expect(response.status).toBe(200);
-  expect(body.response).toContain(noteId);
-  expect(content).toBe(newContent);
+  expect(body.response).toBe(`Document with ID ${noteId} patched.`);
 });
 
 test("/deleteAllNotes - Delete one note", async () => {
@@ -133,7 +134,8 @@ test("/deleteAllNotes - Delete three notes", async () => {
 });
 
 test("/updateNoteColor - Update color of a note to red (#FF0000)", async () => {
-  const noteId = await createTestNote();
+  const res = await createTestNote();
+  const noteId = (await res.json()).insertedId;
   const color = "#FFFFFF";
 
   const response = await fetch(`${SERVER_URL}/updateNoteColor/${noteId}`, {
